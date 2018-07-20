@@ -49,14 +49,15 @@ public class DsCmsDao extends MyBatisDao
 		return (ViewArticle)executeSelect("get", map);
 	}
 
-	public Page<ViewArticle> queryArticlePage(Long siteid, int currentPage, int pageSize, String idArray, boolean desc, boolean onlyImageTop, boolean onlyPageTop, String keyvalue)
+	public Page<ViewArticle> queryArticlePage(Long siteid, int currentPage, int pageSize, List<Long> idList, boolean desc, boolean onlyImageTop, boolean onlyPageTop, String keyvalue)
 	{
 		if(currentPage <= 0){currentPage = 1;}
 		if(pageSize <= 0){pageSize = 25;}
+		if(idList.size() == 0){idList.add(0L);}
 		Map<String, Object> map = new HashMap<String, Object>();
 		PageRequest rq = new PageRequest(currentPage, pageSize, map);
 		rq.getFilters().put("siteid", siteid);
-		rq.getFilters().put("idArray", idArray);
+		rq.getFilters().put("idList", idList);
 		rq.getFilters().put("desc", desc);
 		rq.getFilters().put("imgtop", onlyImageTop?"1":"");
 		rq.getFilters().put("pagetop", onlyPageTop?"1":"");

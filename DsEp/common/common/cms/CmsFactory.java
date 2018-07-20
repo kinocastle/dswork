@@ -121,9 +121,9 @@ public class CmsFactory
 		{
 			pageSize = 25;
 		}
-		StringBuilder idArray = new StringBuilder();
-		idArray.append(toLong(categoryid));
-		Page<ViewArticle> page = getDao().queryArticlePage(site.getId(), currentPage, pageSize, idArray.toString(), desc, onlyImageTop, onlyPageTop, null);
+		List<Long> idList = new ArrayList<Long>();
+		idList.add(toLong(categoryid));
+		Page<ViewArticle> page = getDao().queryArticlePage(site.getId(), currentPage, pageSize, idList, desc, onlyImageTop, onlyPageTop, null);
 		ViewArticleNav nav = new ViewArticleNav();
 		currentPage = page.getCurrentPage();// 更新当前页
 		nav.addListAll(page.getResult());
@@ -207,33 +207,25 @@ public class CmsFactory
 
 	private List<ViewArticle> doQueryList(int currentPage, int pageSize, boolean desc, boolean onlyImageTop, boolean onlyPageTop, String keyvalue, Object... categoryids)
 	{
-		StringBuilder idArray = new StringBuilder();
-		if(categoryids.length > 0)
+		List<Long> idList = new ArrayList<Long>();
+		for(Object id : categoryids)
 		{
-			idArray.append("0");
-			for(int i = 0; i < categoryids.length; i++)
-			{
-				idArray.append(",").append(toLong(categoryids[i]));
-			}
+			idList.add(toLong(id));
 		}
-		return getDao().queryArticlePage(site.getId(), currentPage, pageSize, idArray.toString(), desc, onlyImageTop, onlyPageTop, keyvalue).getResult();
+		return getDao().queryArticlePage(site.getId(), currentPage, pageSize, idList, desc, onlyImageTop, onlyPageTop, keyvalue).getResult();
 	}
 
 	private ViewArticleSet doQueryPage(int currentPage, int pageSize, boolean desc, boolean onlyImageTop, boolean onlyPageTop, String keyvalue, Object... categoryids)
 	{
-		StringBuilder idArray = new StringBuilder();
-		if(categoryids.length > 0)
+		List<Long> idList = new ArrayList<Long>();
+		for(Object id : categoryids)
 		{
-			idArray.append("0");
-			for(int i = 0; i < categoryids.length; i++)
-			{
-				idArray.append(",").append(toLong(categoryids[i]));
-			}
+			idList.add(toLong(id));
 		}
 		ViewArticleSet set = new ViewArticleSet();
 		try
 		{
-			Page<ViewArticle> page = getDao().queryArticlePage(site.getId(), currentPage, pageSize, idArray.toString(), desc, onlyImageTop, onlyPageTop, keyvalue);
+			Page<ViewArticle> page = getDao().queryArticlePage(site.getId(), currentPage, pageSize, idList, desc, onlyImageTop, onlyPageTop, keyvalue);
 			set.setStatus(1);// success
 			set.setMsg("success");
 			set.setSize(page.getTotalCount());

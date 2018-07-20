@@ -3,6 +3,9 @@
  */
 package common.cms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import common.cms.model.ViewArticle;
 import common.cms.model.ViewArticleNav;
 import dswork.core.page.Page;
@@ -28,9 +31,9 @@ public class CmsFactoryMobile extends CmsFactory
 		{
 			pageSize = 25;
 		}
-		StringBuilder idArray = new StringBuilder();
-		idArray.append(toLong(categoryid));
-		Page<ViewArticle> page = getDao().queryArticlePage(site.getId(), currentPage, pageSize, idArray.toString(), desc, onlyImageTop, onlyPageTop, null);
+		List<Long> idList = new ArrayList<Long>();
+		idList.add(toLong(categoryid));
+		Page<ViewArticle> page = getDao().queryArticlePage(site.getId(), currentPage, pageSize, idList, desc, onlyImageTop, onlyPageTop, null);
 		ViewArticleNav nav = new ViewArticleNav();
 		currentPage = page.getCurrentPage();// 更新当前页
 		nav.addListAll(page.getResult());

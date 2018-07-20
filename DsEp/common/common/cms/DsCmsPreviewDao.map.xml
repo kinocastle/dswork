@@ -40,7 +40,7 @@
 <select id="query" resultType="common.cms.model.ViewArticle">
 	select <include refid="c_article" /> from DS_CMS_PAGE_EDIT
 	where SITEID=#{siteid} and STATUS != -1
-		<if test="@Ognl@isNotEmpty(idArray)"> and CATEGORYID in (${idArray}) </if>
+		<if test="@Ognl@isNotEmpty(idList)"> and CATEGORYID in <foreach collection="idList" item="id" open="(" close=")" separator=",">#{id}</foreach></if>
 		<if test="@Ognl@isNotEmpty(imgtop)"> and IMGTOP=1 </if>
 		<if test="@Ognl@isNotEmpty(pagetop)"> and PAGETOP=1 </if>
 		<if test="@Ognl@isNotEmpty(releasetime)"> and RELEASETIME&lt;=#{releasetime} </if>

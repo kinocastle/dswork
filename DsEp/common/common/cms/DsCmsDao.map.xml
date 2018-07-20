@@ -49,7 +49,7 @@
 <select id="queryCount" resultType="int">
 	select count(1) from DS_CMS_PAGE
 	where SITEID=#{siteid} 
-		<if test="@Ognl@isNotEmpty(idArray)"> and CATEGORYID in (${idArray}) </if>
+		<if test="@Ognl@isNotEmpty(idList)"> and CATEGORYID in <foreach collection="idList" item="id" open="(" close=")" separator=",">#{id}</foreach></if>
 		<if test="@Ognl@isNotEmpty(status)"> and STATUS=#{status} </if>
 		<if test="imgtop == true"> and IMGTOP=1 </if>
 		<if test="pagetop == true"> and PAGETOP=1 </if>
