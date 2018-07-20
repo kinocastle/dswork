@@ -45,7 +45,7 @@
 		<if test="@Ognl@isNotEmpty(pagetop)"> and PAGETOP=1 </if>
 		<if test="@Ognl@isNotEmpty(releasetime)"> and RELEASETIME&lt;=#{releasetime} </if>
 		<if test="@Ognl@isNotEmpty(keyvalue)"> and (TITLE like #{keyvalue, typeHandler=LikeTypeHandler} or SUMMARY like #{keyvalue, typeHandler=LikeTypeHandler} or CONTENT like #{keyvalue, typeHandler=LikeTypeHandler}) </if>
-	order by RELEASETIME ${order}
+	order by RELEASETIME <if test="desc == true">desc</if>
 </select>
 <select id="queryCount" resultType="int">
 	select count(1) from DS_CMS_PAGE_EDIT

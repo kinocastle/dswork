@@ -62,7 +62,7 @@ p.title{font-size:20px;padding-bottom:5px;border-bottom:solid 1px #ccc;}
 				<p><span class="v">listOrPage</span><span class="c">列表或者分页</span><span class="t">boolean</span></p>
 				<p><span class="v">currentPage</span><span class="c">当前页数</span><span class="t">int</span></p>
 				<p><span class="v">pageSize</span><span class="c">每页文章数量</span><span class="t">int</span></p>
-				<p><span class="v">isDesc</span><span class="c">是否倒序</span><span class="t">boolean</span></p>
+				<p><span class="v">desc</span><span class="c">是否倒序</span><span class="t">boolean</span></p>
 				<p><span class="v">onlyImageTop</span><span class="c">是否只查有焦点图的</span><span class="t">boolean</span></p>
 				<p><span class="v">onlyPageTop</span><span class="c">是否只查首页推荐的</span><span class="t">boolean</span></p>
 				<p><span class="v">keyvalue</span><span class="c">查询关键字</span><span class="t">String</span></p>
