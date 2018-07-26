@@ -761,6 +761,7 @@ public class DsCmsEditController extends DsCmsBaseController
 
 	private String changeContentToLocal(DsCmsSite site, String content)
 	{
+		content = content.replace("&amp;", "&");
 		Document doc = HtmlUtil.parse(content);
 		List<Element> imgs = doc.select("img");
 		for(Element img : imgs)
@@ -796,32 +797,46 @@ public class DsCmsEditController extends DsCmsBaseController
 
 	private String remoteImageToLocal(String siteUrl, String siteFolder, String imgUrl)
 	{
+		String extName;
+		String url = imgUrl.split("\\?")[0];
 		if(
-			imgUrl.endsWith(".jpg") ||
-			imgUrl.endsWith(".jpeg") ||
-			imgUrl.endsWith(".gif") ||
-			imgUrl.endsWith(".png")
+			url.endsWith(".jpg") || url.endsWith(".JPG") ||
+			url.endsWith(".jpeg") || url.endsWith(".JPEG") ||
+			url.endsWith(".gif") || url.endsWith(".GIF") ||
+			url.endsWith(".png") || url.endsWith(".PNG")
 		)
 		{
-			String[] ss = imgUrl.split("\\.");
-			String extName = ss[ss.length - 1];
-			String imgName = System.currentTimeMillis() + "." + extName;
-			String ym = TimeUtil.getCurrentTime("yyyyMM");
-			String imgPath = getCmsRoot() + "/html/" + siteFolder + "/html/f/img/" + ym + "/" + imgName;
-			HttpUtil httpUtil = new HttpUtil().create(imgUrl);
-			// 防止因httpUtil.connectStream()可能为null而出现NPE
-			try
+			String[] ss = url.split("\\.");
+			extName = ss[ss.length - 1];
+		}
+		else
+		{
+			extName = "jpg";
+		}
+		String imgName = System.currentTimeMillis() + "." + extName;
+		String ym = TimeUtil.getCurrentTime("yyyyMM");
+		String imgPath = getCmsRoot() + "/html/" + siteFolder + "/html/f/img/" + ym + "/" + imgName;
+		HttpUtil httpUtil = new HttpUtil().create(imgUrl);
+		try
+		{
+			byte[] bytes;
+			if(extName.toLowerCase().equals("gif"))
 			{
-				if(FileUtil.writeFile(imgPath, httpUtil.connectStream(), true))
-				{
-					return siteUrl + "/f/img/" + ym + "/" + imgName;
-				}
+				bytes = FileUtil.getToByte(httpUtil.connectStream());
 			}
-			catch(Exception e)
+			else
 			{
-				System.err.println("图片 " + imgUrl + " 转换到本地失败");
-				e.printStackTrace();
+				bytes = dswork.core.util.ImageUtil.resize(httpUtil.connectStream(), 1000, 1000);
 			}
+			if(FileUtil.writeFile(imgPath, FileUtil.getToInputStream(bytes), true))
+			{
+				return siteUrl + "/f/img/" + ym + "/" + imgName;
+			}
+		}
+		catch(Exception e)
+		{
+			System.err.println("图片 " + imgUrl + " 转换到本地失败");
+			e.printStackTrace();
 		}
 		return imgUrl;
 	}
