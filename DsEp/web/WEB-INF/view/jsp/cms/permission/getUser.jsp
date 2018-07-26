@@ -19,7 +19,7 @@ function empower(account){
 	</tr>
 </table>
 <div class="line"></div>
-<form id="queryForm" method="post" action="getCommonUser.htm">
+<form id="queryForm" method="post" action="getUser.htm">
 <table border="0" cellspacing="0" cellpadding="0" class="queryTable">
 	<tr>
 		<td class="input">
