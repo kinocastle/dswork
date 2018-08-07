@@ -162,7 +162,7 @@ public class DsCmsAuditController extends DsCmsBaseController
 					if("pass".equals(action))
 					{
 						p.setStatus(1);
-						p.setAuditstatus(4);
+						p.setAuditstatus(DsCmsCategoryEdit.PASS);
 						service.updateCategoryEdit(p, true, s.isWriteLog());
 						print(1);
 						return;
@@ -170,7 +170,7 @@ public class DsCmsAuditController extends DsCmsBaseController
 					if("nopass".equals(action))
 					{
 						p.setStatus(0);
-						p.setAuditstatus(2);
+						p.setAuditstatus(DsCmsCategoryEdit.NOPASS);
 						service.updateCategoryEdit(p, false, s.isWriteLog());
 						print(1);
 						return;
@@ -265,7 +265,7 @@ public class DsCmsAuditController extends DsCmsBaseController
 					if("pass".equals(action))
 					{
 						p.setStatus(1);
-						p.setAuditstatus(4);
+						p.setAuditstatus(DsCmsCategoryEdit.PASS);
 						if(p.getStatus() == -1)
 						{
 							service.updateDeletePageEdit(p, s.isWriteLog());
@@ -280,7 +280,7 @@ public class DsCmsAuditController extends DsCmsBaseController
 					if("nopass".equals(action))
 					{
 						p.setStatus(0);
-						p.setAuditstatus(2);
+						p.setAuditstatus(DsCmsCategoryEdit.NOPASS);
 						service.updatePageEdit(p, false, s.isWriteLog());
 						print(1);
 						return;

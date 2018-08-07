@@ -203,7 +203,7 @@ public class DsCmsAuditService
 			{
 				p.setStatus(-1);
 				po.setStatus(-1);
-				po.setAuditstatus(4);
+				po.setAuditstatus(DsCmsCategoryEdit.PASS);
 				pageDao.update(p);
 				pageEditDao.update(po);
 			}

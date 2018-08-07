@@ -16,6 +16,7 @@ import dswork.cms.dao.DsCmsPageDao;
 import dswork.cms.dao.DsCmsPageEditDao;
 import dswork.cms.dao.DsCmsSiteDao;
 import dswork.cms.model.DsCmsCategory;
+import dswork.cms.model.DsCmsCategoryEdit;
 import dswork.cms.model.DsCmsPage;
 import dswork.cms.model.DsCmsPageEdit;
 import dswork.cms.model.DsCmsSite;
@@ -155,7 +156,7 @@ public class DsCmsCategoryService extends BaseService<DsCmsCategory, Long>
 						if(pe != null)
 						{
 							pe.setStatus(0);
-							pe.setAuditstatus(0);
+							pe.setAuditstatus(DsCmsCategoryEdit.EDIT);
 							pageEditDao.update(pe);
 						}
 					}

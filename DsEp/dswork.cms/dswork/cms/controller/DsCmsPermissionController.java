@@ -150,7 +150,7 @@ public class DsCmsPermissionController extends DsCmsBaseController
 								}
 							}
 							DsCmsCategoryEdit _c = service.getCategoryEdit(c.getId());
-							if(_c != null && _c.getAuditstatus() == 1)
+							if(_c != null && _c.isAudit())
 							{
 								idList.add(_c.getId());
 							}
