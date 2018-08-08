@@ -264,7 +264,6 @@ public class DsCmsAuditController extends DsCmsBaseController
 					String action = req.getString("action");
 					if("pass".equals(action))
 					{
-						p.setStatus(1);
 						p.setAuditstatus(DsCmsCategoryEdit.PASS);
 						if(p.getStatus() == -1)
 						{
@@ -272,6 +271,7 @@ public class DsCmsAuditController extends DsCmsBaseController
 						}
 						else
 						{
+							p.setStatus(1);
 							service.updatePageEdit(p, true, s.isWriteLog());
 						}
 						print(1);
