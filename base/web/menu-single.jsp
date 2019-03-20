@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" import="
 dswork.spring.BeanFactory,
-dswork.common.model.DsCommonFunc,
-dswork.common.dao.DsCommonSingleUserFuncDao,
+dswork.base.model.DsBaseFunc,
+dswork.base.dao.DsBaseSingleUserFuncDao,
 common.auth.AuthUtil,
 common.auth.Auth,
 java.util.List
@@ -14,8 +14,8 @@ private void todo(HttpServletRequest request)
 	{
 		try
 		{
-			DsCommonSingleUserFuncDao dao = (DsCommonSingleUserFuncDao)BeanFactory.getBean("dsCommonSingleUserFuncDao");
-			List<DsCommonFunc> list = dao.getFuncBySystemidAndAccount(1L, auth.getAccount());// TODO 这里要设置系统的ID
+			DsBaseSingleUserFuncDao dao = (DsBaseSingleUserFuncDao)BeanFactory.getBean("DsBaseSingleUserFuncDao");
+			List<DsBaseFunc> list = dao.getFuncBySystemidAndAccount(1L, auth.getAccount());// TODO 这里要设置系统的ID
 			request.setAttribute("list", list);
 		}
 		catch(Exception e)

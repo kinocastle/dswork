@@ -12,7 +12,7 @@ public PageRequest genSQL(PageRequest pr, boolean isCount){
 	else{
 		sql.append(" id, logintime, logouttime, timeouttime, pwdtime, ip, account, name, status");
 	}
-	sql.append(" from DS_COMMON_LOGIN where 1=1");
+	sql.append(" from DS_BASE_LOGIN where 1=1");
 	if(isNotEmpty(pr, "logintime_begin")){
 		sql.append(" and LOGINTIME>=#{logintime_begin}");
 	}
