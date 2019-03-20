@@ -6,6 +6,13 @@
 <mapper namespace="${namespace}.dao.${model}Dao">
 
 <insert id="insert" parameterType="${namespace}.model.${model}">
+<#list table.column as c>
+	<#if c.key && c.auto>
+	<selectKey resultType="${c.type}" order="AFTER" keyProperty="${c.nameLowerCamel}">
+		<include refid="dswork.rowid" />
+	</selectKey>
+	</#if>
+</#list>
 	insert into ${table.nameUpperCase}
 	(<#list table.column as c>${c.nameUpperCase}<#if c_has_next>, </#if></#list>)
 	values
@@ -22,6 +29,7 @@
 		${c.nameUpperCase}=${'#'}{${c.nameLowerCamel}}<#if c_has_next>,</#if>
 </#list>
 	where <#list table.columnKey as c>${c.nameUpperCase}=${'#'}{${c.nameLowerCamel}}<#if c_has_next> and </#if></#list>
+	<if test="@Ognl@isNotEmpty(lasttime)"> and LASTTIME=${'#'}{lasttime} </if>
 </update>
 
 <resultMap id="result" type="${namespace}.model.${model}">
@@ -62,7 +70,7 @@
 </select>
 
 <select id="queryCount" resultType="int">
-	select count(1) from ${table.name}
+	select count(1) from ${table.nameUpperCase}
 	<include refid="dynamicWhere" />
 </select>
 

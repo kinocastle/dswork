@@ -1,9 +1,11 @@
-<%
+<%!
+private static final String STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+%><%
 java.io.InputStream in = null;
 try
 {
-	String s_name = String.valueOf(request.getParameter("name"));//经由get方式传递过来的文件名
-	String f = String.valueOf(request.getParameter("f"));//经由get方式传递过来的文件名
+	String s_name = String.valueOf(request.getParameter("name")).replace("/", "").replace("\\", "").replace(".", "");//经由get方式传递过来的文件名
+	String f = String.valueOf(request.getParameter("f")).replace("/", "").replace("\\", "");//经由get方式传递过来的文件名
 	String t = String.valueOf(request.getParameter("t"));//经由get方式传递过来的下载文件名
 	if(s_name.length() > 0 && !s_name.equals("null") && f.length() > 33)// f=****.***
 	{

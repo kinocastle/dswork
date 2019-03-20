@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class WebFilter implements Filter
 {
-	static com.google.gson.Gson gson = AuthGlobal.getGson();
+	static com.google.gson.Gson gson = AuthGlobal.gson;
 	static Logger log = LoggerFactory.getLogger("dswork.sso");
 	
 	private static boolean use = false;// 用于判断是否加载sso模块
@@ -36,7 +36,10 @@ public class WebFilter implements Filter
 
 	private final static String DS_SSO_TICKET = "DS_SSO_TICKET";
 	private final static String DS_SSO_CODE = "DS_SSO_CODE";
-	
+
+	private static String appid = "";// 登入页面
+	private static String appsecret = "";// 登入页面
+	private static String thirdLoginURL = "";
 	private static String loginURL = "";// 登入页面
 	private static String logoutURL = "";// 登出页面
 	private static String passwordURL = "";// 修改密码页面
@@ -241,12 +244,12 @@ public class WebFilter implements Filter
 			{
 				if(systemURL.length() > 0)
 				{
-					_url = passwordURL + "?service=" + URLEncoder.encode(systemURL, "UTF-8");
+					_url = passwordURL + "?service=" + URLEncoder.encode(systemURL, "UTF-8") + (thirdLoginURL.length() > 0 ? "&loginURL=" + URLEncoder.encode(thirdLoginURL, "UTF-8") : "");
 				}
 			}
 			else
 			{
-				_url = passwordURL + "?service=" + URLEncoder.encode(url, "UTF-8");
+				_url = passwordURL + "?service=" + URLEncoder.encode(url, "UTF-8") + (thirdLoginURL.length() > 0 ? "&loginURL=" + URLEncoder.encode(thirdLoginURL, "UTF-8") : "");
 			}
 		}
 		catch(Exception e)
@@ -265,12 +268,12 @@ public class WebFilter implements Filter
 			{
 				if(systemURL.length() > 0)
 				{
-					_url = loginURL + "?service=" + URLEncoder.encode(systemURL, "UTF-8");
+					_url = loginURL + (loginURL.indexOf("?") == -1 ? "?" : "&") + "service=" + URLEncoder.encode(systemURL, "UTF-8") + (thirdLoginURL.length() > 0 ? "&loginURL=" + URLEncoder.encode(thirdLoginURL, "UTF-8") : "");
 				}
 			}
 			else
 			{
-				_url = loginURL + "?service=" + URLEncoder.encode(url, "UTF-8");
+				_url = loginURL + (loginURL.indexOf("?") == -1 ? "?" : "&") + "service=" + URLEncoder.encode(url, "UTF-8") + (thirdLoginURL.length() > 0 ? "&loginURL=" + URLEncoder.encode(thirdLoginURL, "UTF-8") : "");
 			}
 		}
 		catch(Exception e)
@@ -289,12 +292,12 @@ public class WebFilter implements Filter
 			{
 				if(systemURL.length() > 0)
 				{
-					_url = logoutURL + "?service=" + URLEncoder.encode(systemURL, "UTF-8");
+					_url = logoutURL + (logoutURL.indexOf("?") == -1 ? "?" : "&") + "service=" + URLEncoder.encode(systemURL, "UTF-8") + (thirdLoginURL.length() > 0 ? "&loginURL=" + URLEncoder.encode(thirdLoginURL, "UTF-8") : "");
 				}
 			}
 			else
 			{
-				_url = logoutURL + "?service=" + URLEncoder.encode(url, "UTF-8");
+				_url = logoutURL + (logoutURL.indexOf("?") == -1 ? "?" : "&") + "service=" + URLEncoder.encode(url, "UTF-8") + (thirdLoginURL.length() > 0 ? "&loginURL=" + URLEncoder.encode(thirdLoginURL, "UTF-8") : "");
 			}
 		}
 		catch(Exception e)
@@ -389,15 +392,22 @@ public class WebFilter implements Filter
 			ssoName = String.valueOf(CONFIG.getProperty("sso.ssoName")).trim();
 			ssoPassword = String.valueOf(CONFIG.getProperty("sso.ssoPassword")).trim();
 			webURL = String.valueOf(CONFIG.getProperty("sso.webURL")).trim();
-			if("null".equals(webURL))
+			loginURL = String.valueOf(CONFIG.getProperty("sso.loginURL")).trim();
+			logoutURL = String.valueOf(CONFIG.getProperty("sso.logoutURL")).trim();
+			if(!"null".equals(webURL))
 			{
-				loginURL = String.valueOf(CONFIG.getProperty("sso.loginURL")).trim();
-				logoutURL = String.valueOf(CONFIG.getProperty("sso.logoutURL")).trim();
-			}
-			else
-			{
-				loginURL  = webURL + "/login";
-				logoutURL = webURL + "/logout";
+				if("null".equals(loginURL))
+				{
+					loginURL  = webURL + "/login";
+				}
+				else if(!loginURL.equals(webURL + "/login"))
+				{
+					thirdLoginURL = loginURL;
+				}
+				if("null".equals(logoutURL))
+				{
+					logoutURL = webURL + "/logout";
+				}
 				passwordURL = webURL + "/password";
 			}
 			systemURL = String.valueOf(CONFIG.getProperty("sso.systemURL")).trim();
@@ -410,22 +420,29 @@ public class WebFilter implements Filter
 			ssoName = String.valueOf(config.getInitParameter("ssoName")).trim();
 			ssoPassword = String.valueOf(config.getInitParameter("ssoPassword")).trim();
 			webURL = String.valueOf(config.getInitParameter("webURL")).trim();
-			if("null".equals(webURL))
+			loginURL = String.valueOf(config.getInitParameter("loginURL")).trim();
+			logoutURL = String.valueOf(config.getInitParameter("logoutURL")).trim();
+			if(!"null".equals(webURL))
 			{
-				loginURL = String.valueOf(config.getInitParameter("loginURL")).trim();
-				logoutURL = String.valueOf(config.getInitParameter("logoutURL")).trim();
-			}
-			else
-			{
-				loginURL  = webURL + "/login";
-				logoutURL = webURL + "/logout";
+				if("null".equals(loginURL))
+				{
+					loginURL  = webURL + "/login";
+				}
+				else if(!loginURL.equals(webURL + "/login"))
+				{
+					thirdLoginURL = loginURL;
+				}
+				if("null".equals(logoutURL))
+				{
+					logoutURL = webURL + "/logout";
+				}
 				passwordURL = webURL + "/password";
 			}
 			systemURL = String.valueOf(config.getInitParameter("systemURL")).trim();
 			hasSameDoamin = String.valueOf(config.getInitParameter("sameDomain")).trim();
 			ignoreURL = String.valueOf(config.getInitParameter("ignoreURL")).trim();
 		}
-		AuthGlobal.init(ssoURL, ssoName, ssoPassword);
+		AuthGlobalSystem.init(ssoURL, ssoName, ssoPassword);
 		WebFilter.use = true;
 		if("null".equals(systemURL)){systemURL = "";}
 		ignoreURLSet.clear();

@@ -42,6 +42,7 @@ public class AuthController
 		//response.setHeader("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
 		MyRequest req = new MyRequest(request);
 		String serviceURL = req.getString("service", request.getContextPath() + "/ticket.jsp");
+		String loginURL = req.getString("loginURL", "");
 		if(log.isDebugEnabled())
 		{
 			log.debug(serviceURL);
@@ -68,7 +69,19 @@ public class AuthController
 			removeLoginInfo(request, response);// 把相关信息删除
 		}
 		request.setAttribute("service", serviceURL);
-		request.setAttribute("errorMsg", "");
+		request.setAttribute("loginURL", loginURL);
+		String msg = req.getString("msg");
+		try
+		{
+			if(msg.length() > 0)
+			{
+				msg = java.net.URLDecoder.decode(msg, "UTF-8");// 防止get方式(两次转码)传递，尝试再转码一次
+			}
+		}
+		catch (Exception e)
+		{
+		}
+		request.setAttribute("msg", msg);
 		return "/login.jsp";
 	}
 
@@ -85,6 +98,7 @@ public class AuthController
 		String password = req.getString("password");
 		String authcode = req.getString("authcode");
 		String serviceURL = req.getString("service", request.getContextPath() + "/ticket.jsp");
+		String loginURL = req.getString("loginURL", "");
 		if(log.isDebugEnabled())
 		{
 			log.debug(serviceURL);
@@ -103,7 +117,8 @@ public class AuthController
 			}
 			else
 			{
-				request.getSession().setAttribute(dswork.web.MyAuthCodeServlet.SessionName_Randcode, "");// 对了再清除
+				request.getSession().setAttribute(MyAuthCodeServlet.SessionName_Randcode, "");// 对了再清除
+				
 				LoginUser user = service.getLoginUserByAccount(account);
 				if(user != null)
 				{
@@ -138,7 +153,15 @@ public class AuthController
 			// 失败则转回来
 			request.setAttribute("account", account);
 			request.setAttribute("service", serviceURL);
-			request.setAttribute("errorMsg", msg);
+			if(loginURL.length() > 0)
+			{
+				loginURL = loginURL + (loginURL.indexOf("?")==-1 ? "?" : "&") + "service=" + java.net.URLEncoder.encode(serviceURL, "UTF-8");
+				loginURL = loginURL + "&msg=" + java.net.URLEncoder.encode(java.net.URLEncoder.encode(msg, "UTF-8"), "UTF-8");
+				response.sendRedirect(loginURL);
+				return null;
+			}
+			// request.setAttribute("loginURL", loginURL);
+			request.setAttribute("msg", msg);
 			try
 			{
 				service.saveLogLogin("", getClientIp(request), account, "", false);
@@ -176,8 +199,17 @@ public class AuthController
 			log.error(e.getMessage());
 		}
 		MyRequest req = new MyRequest(request);
+		String loginURL = req.getString("loginURL", "");
+		if(loginURL.length() > 0)
+		{
+			loginURL = loginURL + (loginURL.indexOf("?") == -1 ? "?" : "&") + "service=";
+		}
+		else
+		{
+			loginURL = request.getContextPath() + "/login?service=";
+		}
 		String serviceURL = java.net.URLEncoder.encode(req.getString("service", request.getContextPath() + "/ticket.jsp"), "UTF-8");
-		response.sendRedirect(request.getContextPath() + "/login?service=" + String.valueOf(serviceURL));
+		response.sendRedirect(loginURL + String.valueOf(serviceURL));
 		return;
 	}
 	
@@ -192,6 +224,7 @@ public class AuthController
 		//response.setHeader("P3P", "CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
 		//response.setHeader("P3P", "CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
 		MyRequest req = new MyRequest(request);
+		String loginURL = req.getString("loginURL", "");
 		String serviceURL = req.getString("service", request.getContextPath() + "/password");
 		if(log.isDebugEnabled())
 		{
@@ -206,13 +239,22 @@ public class AuthController
 			{
 				request.setAttribute("account", _account);
 				request.setAttribute("service", serviceURL);
-				request.setAttribute("errorMsg", "");
+				request.setAttribute("loginURL", loginURL);
+				request.setAttribute("msg", "");
 				return "/password.jsp";
 			}
 		}
 		removeLoginInfo(request, response);// 把相关信息删除
 		serviceURL = request.getContextPath() + "/password?service=" + java.net.URLEncoder.encode(serviceURL, "UTF-8");// 登录后回来修改页并可以再重定向回原页
-		response.sendRedirect(request.getContextPath() + "/login?service=" + String.valueOf(java.net.URLEncoder.encode(serviceURL, "UTF-8")));
+		if(loginURL.length() > 0)
+		{
+			loginURL = loginURL + (loginURL.indexOf("?") == -1 ? "?" : "&") + "service=";
+		}
+		else
+		{
+			loginURL = request.getContextPath() + "/login?service=";
+		}
+		response.sendRedirect(loginURL + String.valueOf(java.net.URLEncoder.encode(serviceURL, "UTF-8")));
 		return null;
 	}
 
@@ -293,13 +335,22 @@ public class AuthController
 					// 失败则转回来
 					request.setAttribute("account", _account);
 					request.setAttribute("service", serviceURL);
-					request.setAttribute("errorMsg", msg);
+					request.setAttribute("msg", msg);
 					return "/password.jsp";
 				}
 			}
 			removeLoginInfo(request, response);// 把相关信息删除
 			serviceURL = request.getContextPath() + "/password?service=" + java.net.URLEncoder.encode(serviceURL, "UTF-8");// 登录后回来修改页并可以再重定向回原页
-			response.sendRedirect(request.getContextPath() + "/login?service=" + String.valueOf(java.net.URLEncoder.encode(serviceURL, "UTF-8")));
+			String loginURL = req.getString("loginURL", "");
+			if(loginURL.length() > 0)
+			{
+				loginURL = loginURL + (loginURL.indexOf("?") == -1 ? "?" : "&") + "service=";
+			}
+			else
+			{
+				loginURL = request.getContextPath() + "/login?service=";
+			}
+			response.sendRedirect(loginURL + String.valueOf(java.net.URLEncoder.encode(serviceURL, "UTF-8")));
 		}
 		catch(Exception e)
 		{
