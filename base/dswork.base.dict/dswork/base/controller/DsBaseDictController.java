@@ -195,47 +195,50 @@ public class DsBaseDictController extends BaseController
 			String mark = req.getString("mark");
 			DsBaseDict dict = service.get(req.getLong("dictid"));
 			DsBaseDictData pNode = service.getData(pid, dict.getName());
+			String[] aliasArr = req.getStringArray("alias", false);
 			String[] labelArr = req.getStringArray("label", false);
 			String[] memoArr = req.getStringArray("memo", false);
 			int v = 0;
 			String s = "";
-			// 如果是字典为受限树形，那么将设置节点层级并处理ID
 			if(dict.getLevel() > 1)
 			{
 				int level;
 				if(pNode == null)
 				{
-					// 顶级节点的层级为0
 					level = 0;
 				}
 				else if(pNode.getLevel() < dict.getLevel())
 				{
-					// 下级节点的层级为上级节点层级+1
 					level = pNode.getLevel() + 1;
 				}
 				else
 				{
-					// 不允许当前添加的节点层级大于限制的节点层级
 					print("0:不允许继续添加子节点");
 					return;
 				}
-				for(int i = 0; i < labelArr.length; i++)
+				for(int i = 0; i < aliasArr.length; i++)
 				{
 					DsBaseDictData po = new DsBaseDictData();
-					if(dict.getRule().isEmpty()) 
+					if(dict.getRules().length > 0) 
 					{
-						po.setId(String.valueOf(UniqueId.genId()));
-					}
-					else
-					{
-						String[] idArr = req.getStringArray("id", false);
-						po.setId(pNode == null ? idArr[i] : pid + idArr[i]);
-						if(idArr[i].length() != dict.getRules()[level])
+						if(pNode == null)
+						{
+							po.setId(aliasArr[i]);
+						}
+						else
+						{
+							po.setId(pid + aliasArr[i]);
+						}
+						if(aliasArr[i].length() != dict.getRules()[level])
 						{
 							v++;
 							s += "," + po.getId() + "编码长度非法";
 							continue;
 						}
+					}
+					else
+					{
+						po.setId(aliasArr[i]);
 					}
 					po.setLevel(level);
 					po.setMark(mark);
@@ -256,10 +259,10 @@ public class DsBaseDictController extends BaseController
 			}
 			else
 			{
-				for(int i = 0; i < labelArr.length; i++)
+				for(int i = 0; i < aliasArr.length; i++)
 				{
 					DsBaseDictData po = new DsBaseDictData();
-					po.setId(String.valueOf(UniqueId.genId()));
+					po.setId(aliasArr[i]);
 					po.setMark(mark);
 					po.setLabel(labelArr[i]);
 					po.setMemo(memoArr[i]);
@@ -277,7 +280,7 @@ public class DsBaseDictController extends BaseController
 				}
 			}
 			// 如果有成功保存的节点
-			if(labelArr.length - v > 0)
+			if(aliasArr.length - v > 0)
 			{
 				if(pNode != null && pNode.getStatus() != 1)
 				{

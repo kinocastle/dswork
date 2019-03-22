@@ -149,8 +149,6 @@ public class DsBaseExUserService extends BaseService<DsBaseUser, java.lang.Long>
 			}
 		}
 		Page page = new Page(currentPage, pageSize, count);
-		page.setPageName(pr.getPageName());
-		page.setPageSizeName(pr.getPageSizeName());
 		page.setResult(result);
 		return page;
 	}

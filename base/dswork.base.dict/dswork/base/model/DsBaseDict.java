@@ -121,13 +121,8 @@ public class DsBaseDict
 		this.updatetime = updatetime;
 	}
 
-	private Boolean limitedRule;
 	public boolean isLimitedRule()
 	{
-		if(limitedRule == null)
-		{
-			limitedRule = level > 1 && getRules().length > 0;
-		}
-		return limitedRule;
+		return level > 1 && getRules().length > 0;
 	}
 }
