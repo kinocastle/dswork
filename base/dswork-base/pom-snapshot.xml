@@ -28,7 +28,7 @@
 		<resources> 
 		     <resource>
 			     <directory>./</directory>
-			     <includes><include>dswork/common/**/*.xml</include></includes>
+			     <includes><include>dswork/base/**/*.xml</include></includes>
 			     <filtering>false</filtering>
 		     </resource>
 		 </resources>

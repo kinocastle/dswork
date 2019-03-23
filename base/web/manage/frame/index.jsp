@@ -28,34 +28,34 @@ a:hover {background-color:#0f9ae0;}
 <script type="text/javascript">
 var treedata = [
 {id:100000, name:'门户管理', img:"", imgOpen:"", url:"", items:[
-	{id:100002,name:'应用系统管理', img:"", imgOpen:"", url:'/ds/common/system/getSystem.htm', items:[]}
-	,{id:100003,name:'组织机构管理', img:"", imgOpen:"", url:'/ds/common/org/getOrgTree.htm', items:[]}
-	,{id:100004,name:'访问授权管理', img:"", imgOpen:"", url:'/ds/common/orgrole/getOrgTree.htm', items:[]}
-	,{id:100006,name:'用户类型管理', img:"", imgOpen:"", url:'/ds/common/usertype/getUsertype.htm', items:[]}
-	,{id:100007,name:'门户用户管理', img:"", imgOpen:"", url:'/ds/common/user/getUser.htm', items:[]}
-	,{id:100008,name:'用户岗位管理', img:"", imgOpen:"", url:'/ds/common/userorg/getOrgTree.htm', items:[]}
-	,{id:100009,name:'门户登录日志', img:"", imgOpen:"", url:'/common/log/getCommonLogin.jsp', items:[]}
+	{id:100002,name:'应用系统管理', img:"", imgOpen:"", url:'/ds/base/system/getSystem.htm', items:[]}
+	,{id:100003,name:'组织机构管理', img:"", imgOpen:"", url:'/ds/base/org/getOrgTree.htm', items:[]}
+	,{id:100004,name:'访问授权管理', img:"", imgOpen:"", url:'/ds/base/orgrole/getOrgTree.htm', items:[]}
+	,{id:100006,name:'用户类型管理', img:"", imgOpen:"", url:'/ds/base/usertype/getUsertype.htm', items:[]}
+	,{id:100007,name:'门户用户管理', img:"", imgOpen:"", url:'/ds/base/user/getUser.htm', items:[]}
+	,{id:100008,name:'用户岗位管理', img:"", imgOpen:"", url:'/ds/base/userorg/getOrgTree.htm', items:[]}
+	,{id:100009,name:'门户登录日志', img:"", imgOpen:"", url:'/base/log/getCommonLogin.jsp', items:[]}
 	,{id:100010,name:'多级管理', img:"", imgOpen:"", url:'', items:[
-		{id:1000101,name:'组织管理', img:"", imgOpen:"", url:'/ds/common/ex/org/getOrgTree.htm', items:[]}
-		,{id:1000102,name:'用户管理', img:"", imgOpen:"", url:'/ds/common/ex/user/getOrgTree.htm', items:[]}
-		,{id:1000103,name:'授权管理', img:"", imgOpen:"", url:'/ds/common/ex/userorg/getOrgTree.htm', items:[]}
+		{id:1000101,name:'组织管理', img:"", imgOpen:"", url:'/ds/base/ex/org/getOrgTree.htm', items:[]}
+		,{id:1000102,name:'用户管理', img:"", imgOpen:"", url:'/ds/base/ex/user/getOrgTree.htm', items:[]}
+		,{id:1000103,name:'授权管理', img:"", imgOpen:"", url:'/ds/base/ex/userorg/getOrgTree.htm', items:[]}
 	]}
 	,{id:100011,name:'单系统', img:"", imgOpen:"", url:'', items:[
-		{id:1000111,name:'资源管理', img:"", imgOpen:"", url:'/ds/common/func/getFuncTree.htm?systemid=1', items:[]}
-		,{id:1000112,name:'角色管理', img:"", imgOpen:"", url:'/ds/common/role/getRoleTree.htm?systemid=1', items:[]}
-		,{id:1000113,name:'用户管理', img:"", imgOpen:"", url:'/ds/common/single/user/getOrgTree.htm', items:[]}
-		,{id:1000114,name:'组织管理', img:"", imgOpen:"", url:'/ds/common/single/org/getOrgTree.htm', items:[]}
-		,{id:1000115,name:'授权管理', img:"", imgOpen:"", url:'/ds/common/single/userrole/getOrgTree.htm?systemid=1', items:[]}
+		{id:1000111,name:'资源管理', img:"", imgOpen:"", url:'/ds/base/func/getFuncTree.htm?systemid=1', items:[]}
+		,{id:1000112,name:'角色管理', img:"", imgOpen:"", url:'/ds/base/role/getRoleTree.htm?systemid=1', items:[]}
+		,{id:1000113,name:'用户管理', img:"", imgOpen:"", url:'/ds/base/single/user/getOrgTree.htm', items:[]}
+		,{id:1000114,name:'组织管理', img:"", imgOpen:"", url:'/ds/base/single/org/getOrgTree.htm', items:[]}
+		,{id:1000115,name:'授权管理', img:"", imgOpen:"", url:'/ds/base/single/userrole/getOrgTree.htm?systemid=1', items:[]}
 	]}
 ]}
 ,{id:200000, name:'业务管理', img:"", imgOpen:"", url:"", items:[
-	{id:200001,name:'字典管理', img:"", imgOpen:"", url:'/ds/common/dict/getDict.htm', items:[]}
-	,{id:200005,name:'流程管理', img:"", imgOpen:"", url:'/ds/common/flow/getFlowCategoryTree.htm', items:[]}
+	{id:200001,name:'字典管理', img:"", imgOpen:"", url:'/ds/base/dict/getDict.htm', items:[]}
+	,{id:200005,name:'流程管理', img:"", imgOpen:"", url:'/ds/base/flow/getFlowCategoryTree.htm', items:[]}
 ]}
 ,{id:100, name:'扩展功能', img:"", imgOpen:"", url:"", items:[
-	{id:901,name:'指定组织机构', img:"", imgOpen:"", url:'/ds/common/org/getOrgTree.htm?rootid=1', items:[]}
-	,{id:902,name:'指定用户授权', img:"", imgOpen:"", url:'/ds/common/userorg/getOrgTree.htm?rootid=1', items:[]}
-	,{id:903,name:'指定类型用户管理', img:"", imgOpen:"", url:'/ds/common/user/getUser.htm?xtype=0', items:[]}
+	{id:901,name:'指定组织机构', img:"", imgOpen:"", url:'/ds/base/org/getOrgTree.htm?rootid=1', items:[]}
+	,{id:902,name:'指定用户授权', img:"", imgOpen:"", url:'/ds/base/userorg/getOrgTree.htm?rootid=1', items:[]}
+	,{id:903,name:'指定类型用户管理', img:"", imgOpen:"", url:'/ds/base/user/getUser.htm?xtype=0', items:[]}
 	,{id:11,name:'流程示例', img:"", imgOpen:"", url:'', items:[
 		{id:111,name:'流程测试', img:"", imgOpen:"", url:'/flow/waiting.jsp', items:[]}
 	]}

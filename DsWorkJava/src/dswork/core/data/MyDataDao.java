@@ -153,7 +153,8 @@ public abstract class MyDataDao extends DaoSupport
 		int totalCount = queryCount(statementNameCount, pageRequestCount);
 		Page page = new Page(pageRequest.getCurrentPage(), pageRequest.getPageSize(), totalCount);
 		// if(page.getTotalCount() <= 0){page.setResult(new ArrayList(0));}else{}//没数据的话不影响性能，而实际上又不可能没有数据
-		List list = getSqlSessionTemplate().selectList(statementName, pageRequest.getFilters(), new RowBounds(page.getFirstResultIndex(), page.getPageSize()));
+		int index = (page.getPage() - 1) * page.getPagesize();
+		List list = getSqlSessionTemplate().selectList(statementName, pageRequest.getFilters(), new RowBounds(index, page.getPagesize()));
 		page.setResult(list);
 		return page;
 	}

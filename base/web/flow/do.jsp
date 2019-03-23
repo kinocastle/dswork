@@ -1,5 +1,5 @@
 <%@page language="java" pageEncoding="UTF-8"%>
-<%@page import="dswork.common.DsFactory, dswork.web.MyRequest, dswork.common.model.*, java.util.*"%>
+<%@page import="dswork.base.DsFactory, dswork.web.MyRequest, dswork.base.model.*, java.util.*"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%
@@ -140,7 +140,7 @@ function uploadFile(row){
 	})
 }
 function loaddata(name, value, objectid, type, ename){
-	$.post("${ctx}/common/share/getJsonDict.htm",{name:name, value:value},function(data){
+	$.post("${ctx}/base/share/getJsonDict.htm",{name:name, value:value},function(data){
 		var a = eval(data);
 		var s = $("#" + objectid);
 		if(type == "checkbox" || type == "radio"){
