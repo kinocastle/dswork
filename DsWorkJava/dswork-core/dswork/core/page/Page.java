@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 分页信息, 第一页从1开始
+ * 分页信息, 第一页从1开始，使用PageData
  * @author skey
  */
 public class Page<T> implements Serializable
@@ -65,28 +65,10 @@ public class Page<T> implements Serializable
 	}
 
 	/**
-	 * 取得当前页页码
-	 * @return int
-	 */
-	public int getCurrentPage()
-	{
-		return page;
-	}
-
-	/**
 	 * 取得一页显示的条数
 	 * @return int
 	 */
 	public int getPagesize()
-	{
-		return pagesize;
-	}
-
-	/**
-	 * 取得一页显示的条数
-	 * @return int
-	 */
-	public int getPageSize()
 	{
 		return pagesize;
 	}
@@ -126,7 +108,7 @@ public class Page<T> implements Serializable
 	 * 取得数据总页数
 	 * @return int
 	 */
-	public int getTotalPage()
+	public int getTotalpage()
 	{
 		int lastPage = totalsize % pagesize == 0 ? totalsize / pagesize : totalsize / pagesize + 1;
 		if(lastPage < 1)
@@ -137,16 +119,32 @@ public class Page<T> implements Serializable
 	}
 
 	/**
-	 * 取得数据总页数
+	 * 取得当前页页码getPage
 	 * @return int
 	 */
-	public int getTotalpage()
+	@Deprecated
+	public int getCurrentPage()
 	{
-		int lastPage = totalsize % pagesize == 0 ? totalsize / pagesize : totalsize / pagesize + 1;
-		if(lastPage < 1)
-		{
-			lastPage = 1;
-		}
-		return lastPage;
+		return getPage();
+	}
+
+	/**
+	 * 取得一页显示的条数getPagesize
+	 * @return int
+	 */
+	@Deprecated
+	public int getPageSize()
+	{
+		return getPagesize();
+	}
+
+	/**
+	 * 取得数据总页数getTotalpage
+	 * @return int
+	 */
+	@Deprecated
+	public int getTotalPage()
+	{
+		return getTotalpage();
 	}
 }

@@ -6,7 +6,6 @@ package dswork.base.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,7 +18,6 @@ import dswork.core.util.CollectionUtil;
 import dswork.core.util.UniqueId;
 import dswork.mvc.BaseController;
 
-@Scope("prototype")
 @Controller
 @RequestMapping("/ds/base/dict")
 public class DsBaseDictController extends BaseController
@@ -69,7 +67,7 @@ public class DsBaseDictController extends BaseController
 	{
 		try
 		{
-			service.deleteBatch(CollectionUtil.toLongArray(req.getLongArray("keyIndex", 0)));
+			service.deleteBatch(CollectionUtil.toLongArray(req().getLongArray("keyIndex", 0)));
 			print(1);
 		}
 		catch(Exception e)
@@ -83,7 +81,7 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/updDict1")
 	public String updDict1()
 	{
-		Long id = req.getLong("keyIndex");
+		Long id = req().getLong("keyIndex");
 		put("po", service.get(id));
 		return "/ds/base/dict/updDict.jsp";
 	}
@@ -122,7 +120,7 @@ public class DsBaseDictController extends BaseController
 	{
 		Page<DsBaseDict> pageModel = service.queryPage(getPageRequest());
 		put("pageModel", pageModel);
-		put("pageNav", new PageNav<DsBaseDict>(request, pageModel));
+		put("pageNav", new PageNav<DsBaseDict>(request(), pageModel));
 		return "/ds/base/dict/getDict.jsp";
 	}
 
@@ -130,7 +128,7 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/getDictDataTree")
 	public String getDictDataTree()
 	{
-		Long id = req.getLong("keyIndex");
+		Long id = req().getLong("keyIndex");
 		put("po", service.get(id));
 		return "/ds/base/dict/getDictDataTree.jsp";
 	}
@@ -139,8 +137,8 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/getDictDataJson") // ByDictidAndPid
 	public void getDictDataJson()
 	{
-		DsBaseDict po = service.get(req.getLong("dictid"));
-		List<DsBaseDictData> list = service.queryListData(req.getString("pid"), po.getName(), req.getParameterValueMap(false, false));
+		DsBaseDict po = service.get(req().getLong("dictid"));
+		List<DsBaseDictData> list = service.queryListData(req().getString("pid"), po.getName(), req().getParameterValueMap(false, false));
 		print(list);
 	}
 
@@ -148,13 +146,17 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/getDictData")
 	public String getDictData()
 	{
-		String pid = req.getString("pid");
-		DsBaseDict po = service.get(req.getLong("dictid"));
-		List<DsBaseDictData> list = service.queryListData(pid, po.getName(), req.getParameterValueMap(false, false));
+		String pid = req().getString("pid");
+		DsBaseDict po = service.get(req().getLong("dictid"));
+		List<DsBaseDictData> list = service.queryListData(pid, po.getName(), req().getParameterValueMap(false, false));
 		if(po.getLevel() > 1)
 		{
 			DsBaseDictData pNode = service.getData(pid, po.getName());
-			put("level", pNode == null ? 0 : pNode.getLevel() + 1);
+			put("level", pNode == null ? 1 : pNode.getLevel() + 1);
+		}
+		else
+		{
+			put("level", po.getLevel());
 		}
 		put("list", list);
 		put("po", po);
@@ -168,15 +170,15 @@ public class DsBaseDictController extends BaseController
 	{
 		try
 		{
-			Long dictid = req.getLong("dictid");
-			String pid = req.getString("pid");
+			Long dictid = req().getLong("dictid");
+			String pid = req().getString("pid");
 			DsBaseDict dict = service.get(dictid);
 			put("pid", pid);
 			put("dict", dict);
 			if(dict.isLimitedRule())
 			{
 				DsBaseDictData pNode = service.getData(pid, dict.getName());
-				put("rule", dict.getRules()[pNode == null ? 0 : pNode.getLevel() + 1]);
+				put("rule", dict.getRules()[pNode == null ? 0 : pNode.getLevel()]);
 			}
 			return "/ds/base/dict/addDictData.jsp";
 		}
@@ -191,13 +193,13 @@ public class DsBaseDictController extends BaseController
 	{
 		try
 		{
-			String pid = req.getString("pid");
-			String mark = req.getString("mark");
-			DsBaseDict dict = service.get(req.getLong("dictid"));
+			String pid = req().getString("pid");
+			String mark = req().getString("mark");
+			DsBaseDict dict = service.get(req().getLong("dictid"));
 			DsBaseDictData pNode = service.getData(pid, dict.getName());
-			String[] aliasArr = req.getStringArray("alias", false);
-			String[] labelArr = req.getStringArray("label", false);
-			String[] memoArr = req.getStringArray("memo", false);
+			String[] aliasArr = req().getStringArray("alias", false);
+			String[] labelArr = req().getStringArray("label", false);
+			String[] memoArr = req().getStringArray("memo", false);
 			int v = 0;
 			String s = "";
 			if(dict.getLevel() > 1)
@@ -205,7 +207,7 @@ public class DsBaseDictController extends BaseController
 				int level;
 				if(pNode == null)
 				{
-					level = 0;
+					level = 1;
 				}
 				else if(pNode.getLevel() < dict.getLevel())
 				{
@@ -229,7 +231,7 @@ public class DsBaseDictController extends BaseController
 						{
 							po.setId(pid + aliasArr[i]);
 						}
-						if(aliasArr[i].length() != dict.getRules()[level])
+						if(aliasArr[i].length() != dict.getRules()[level - 1])
 						{
 							v++;
 							s += "," + po.getId() + "编码长度非法";
@@ -266,6 +268,7 @@ public class DsBaseDictController extends BaseController
 					po.setMark(mark);
 					po.setLabel(labelArr[i]);
 					po.setMemo(memoArr[i]);
+					po.setLevel(dict.getLevel());
 					po.setStatus(0);
 					po.setName(dict.getName());
 					po.setPid(pid);
@@ -304,9 +307,9 @@ public class DsBaseDictController extends BaseController
 		try
 		{
 			int v = 0;
-			String pid = req.getString("pid");
-			String[] ids = req.getStringArray("keyIndex", false);
-			String name = req.getString("name");
+			String pid = req().getString("pid");
+			String[] ids = req().getStringArray("keyIndex", false);
+			String name = req().getString("name");
 			for(String id : ids)
 			{
 				if(service.getDataCount(id, name) == 0)
@@ -331,8 +334,8 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/updDictData1")
 	public String updDictData1()
 	{
-		String id = req.getString("keyIndex");
-		String name = req.getString("name");
+		String id = req().getString("keyIndex");
+		String name = req().getString("name");
 		put("po", service.getData(id, name));
 		return "/ds/base/dict/updDictData.jsp";
 	}
@@ -356,9 +359,9 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/updDictDataSeq1")
 	public String updDictDataSeq1()
 	{
-		String pid = req.getString("pid");
-		DsBaseDict po = service.get(req.getLong("dictid"));
-		List<DsBaseDictData> list = service.queryListData(pid, po.getName(), req.getParameterValueMap(false, false));
+		String pid = req().getString("pid");
+		DsBaseDict po = service.get(req().getLong("dictid"));
+		List<DsBaseDictData> list = service.queryListData(pid, po.getName(), req().getParameterValueMap(false, false));
 		put("list", list);
 		put("po", po);
 		put("pid", pid);
@@ -368,8 +371,8 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/updDictDataSeq2")
 	public void updDictDataSeq2()
 	{
-		String[] ids = req.getStringArray("keyIndex", false);
-		String name = req.getString("name");
+		String[] ids = req().getStringArray("keyIndex", false);
+		String name = req().getString("name");
 		try
 		{
 			if(ids.length > 0)
@@ -393,7 +396,7 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/updDictDataMove1")
 	public String updDictDataMove1()
 	{
-		DsBaseDict po = service.get(req.getLong("dictid"));
+		DsBaseDict po = service.get(req().getLong("dictid"));
 		if(po.getLevel() > 1)
 		{
 			return null;
@@ -412,14 +415,14 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/updDictDataMove2")
 	public void updDictDataMove2()
 	{
-		DsBaseDict po = service.get(req.getLong("dictid"));
+		DsBaseDict po = service.get(req().getLong("dictid"));
 		if(po.getLevel() > 1)
 		{
 			print("0:受限树形字典不支持移动");
 			return;
 		}
-		String pid = req.getString("pid");
-		String name = req.getString("name");
+		String pid = req().getString("pid");
+		String name = req().getString("name");
 		if(!pid.isEmpty())
 		{
 			DsBaseDictData m = service.getData(pid, name);
@@ -429,7 +432,7 @@ public class DsBaseDictController extends BaseController
 				return;
 			}
 		}
-		String[] ids = req.getStringArray("ids", false);
+		String[] ids = req().getStringArray("ids", false);
 		try
 		{
 			if(ids.length > 0)
@@ -458,8 +461,8 @@ public class DsBaseDictController extends BaseController
 	@RequestMapping("/getDictDataById")
 	public String getDictDataById()
 	{
-		String id = req.getString("keyIndex");
-		String name = req.getString("name");
+		String id = req().getString("keyIndex");
+		String name = req().getString("name");
 		DsBaseDictData po = service.getData(id, name);
 		DsBaseDict dict = service.getByName(po.getName());
 		put("dict", dict);

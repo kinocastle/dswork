@@ -4,7 +4,7 @@
 	dswork.sso.model.ISystem,
 	dswork.sso.model.IUser"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%><c:set var="ctx" value="${pageContext.request.contextPath}" /><%
-IUser user = WebFilter.getAccount(session);
+IUser user = WebFilter.getLoginer(session);
 ISystem[] arr = AuthFactory.getSystemByUser(user.getAccount());
 %>
 <!--<!DOCTYPE html>-->
@@ -26,10 +26,10 @@ sys[sys.length] = {index:<%=i+1%>,data:[],id:<%=arr[i].getId()%>,name:"<%=arr[i]
 <%}}%>
 --%>
 <%if(arr != null){for(int i = 0; i < arr.length; i++){%>
-sys[sys.length] = {index:<%=i+1%>,data:[],id:<%=arr[i].getId()%>,name:"<%=arr[i].getName().replaceAll("\"", "\\\\\"")%>",alias:"<%=arr[i].getAlias()%>",domainurl:"<%=arr[i].getDomainurl().replaceAll("\"", "\\\\\"")%>",rooturl:"<%=arr[i].getRooturl().replaceAll("\"", "\\\\\"")%>",menuurl:"<%=arr[i].getMenuurl().replaceAll("\"", "\\\\\"")%>"};
+sys[sys.length] = {index:<%=i%>,data:[],id:<%=arr[i].getId()%>,name:"<%=arr[i].getName().replaceAll("\"", "\\\\\"")%>",alias:"<%=arr[i].getAlias()%>",domainurl:"<%=arr[i].getDomainurl().replaceAll("\"", "\\\\\"")%>",rooturl:"<%=arr[i].getRooturl().replaceAll("\"", "\\\\\"")%>",menuurl:"<%=arr[i].getMenuurl().replaceAll("\"", "\\\\\"")%>"};
 <%}}%>
 function menuload(o){
-	var url = (o.menuurl.length == 0) ? o.rooturl + "/sso/menu" : o.domainurl + o.menuurl;
+	var url = o.domainurl + ((o.menuurl.length == 0) ? o.rooturl + "/sso/menu" : o.menuurl);
 	url += ((url.indexOf("?") == -1)?"?":"&") + "ssoticket=<%=user.getSsoticket()%>" + "&jsoncallback=?";
 	$.getJSON(url, {},
 		function(data){

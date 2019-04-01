@@ -118,7 +118,8 @@ public class AuthWebConfig
 			try{if(stream != null) {stream.close();}}catch(Exception ioe){}
 		}
 		
-		AuthGlobal.initConfig(str(C, "sso.appid", null), str(C, "sso.appsecret", null), str(C, "sso.apiURL", null));// 初始化全局设置
+		boolean initAccessToken = !"false".equals(String.valueOf(str(C, "sso.initAccessToken", null)));
+		AuthGlobal.initConfig(str(C, "sso.appid", "sso.appID"), str(C, "sso.appsecret", "sso.appSecret"), str(C, "sso.apiURL", null), initAccessToken);// 初始化全局设置
 
 		String webURL = str(C, "sso.webURL", null);
 		String sLogin = str(C, "sso.system.loginURL", null);
@@ -128,8 +129,8 @@ public class AuthWebConfig
 		{
 			sWeb = context.getContextPath();
 		}
-		String sAlias = str(C, "sso.systemAlias", "sso.ssoName");
-		String sPassword = str(C, "sso.systemPassword", "sso.ssoPassword");
+		String sAlias = str(C, "sso.system.alias", "sso.ssoName");
+		String sPassword = str(C, "sso.system.password", "sso.ssoPassword");
 		initSystemConfig(webURL, sLogin, sRedirect, sWeb, sAlias, sPassword);
 		
 		String ignoreURL = str(C, "sso.system.ignoreURL", null);
@@ -207,11 +208,23 @@ public class AuthWebConfig
 		}
 		if(ssoticket != null && ssoticket.length() > 10)
 		{
-			String[] arr = ssoticket.split("-", 2);
-			if(arr.length == 2)
+			if(ssoticket.startsWith("-"))
 			{
-				arr = new String[]{arr[0], arr[1], ssoticket};
-				return arr;
+				String[] arr = ssoticket.substring(1).split("-", 2);
+				if(arr.length == 2)
+				{
+					arr = new String[]{"-" + arr[0], arr[1], ssoticket};
+					return arr;
+				}
+			}
+			else
+			{
+				String[] arr = ssoticket.split("-", 2);
+				if(arr.length == 2)
+				{
+					arr = new String[]{arr[0], arr[1], ssoticket};
+					return arr;
+				}
 			}
 		}
 		return null;

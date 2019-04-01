@@ -15,17 +15,15 @@ import javax.servlet.http.HttpSession;
 import dswork.sso.model.IUser;
 import dswork.sso.model.JsonResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class WebFilter implements Filter
 {
 	static com.google.gson.Gson gson = AuthGlobal.gson;
-	static Logger log = LoggerFactory.getLogger("dswork.sso");
+	static org.slf4j.Logger log = AuthGlobal.log;
 	
 	private static boolean use = false;// 用于判断是否加载sso模块
 
-	public final static String LOGINER = SSOLoginServlet.LOGINER;
+	public static final String LOGINER = SSOLoginServlet.LOGINER;
+	public static final String SSOTICKET = AuthWebConfig.SSOTICKET;
 
 	public void init(FilterConfig config) throws ServletException
 	{
@@ -86,7 +84,13 @@ public class WebFilter implements Filter
 					}
 					if(SSOLoginServlet.refreshUser(session, user, openid, access_token))
 					{
-						chain.doFilter(request, response);
+						try
+						{
+							chain.doFilter(request, response);
+						}
+						catch(Exception e)
+						{
+						}
 						return;
 					}
 				}
@@ -99,14 +103,30 @@ public class WebFilter implements Filter
 		}
 		if(ouser != null)// 已登录
 		{
-			chain.doFilter(request, response);
+			try
+			{
+				chain.doFilter(request, response);
+			}
+			catch(Exception e)
+			{
+			}
 			return;
+		}
+		else
+		{
+			session.removeAttribute(LOGINER);// 没有用户，清一下session
 		}
 		// String relativeURI = request.getRequestURI();// 相对地址
 		// if(request.getContextPath().length() > 0){relativeURI = relativeURI.replaceFirst(request.getContextPath(), "");}
 		if(AuthWebConfig.containsIgnoreURL(relativeURI))// 判断是否为无需验证页面
 		{
-			chain.doFilter(request, response);// 是无需验证页面
+			try
+			{
+				chain.doFilter(request, response);// 是无需验证页面
+			}
+			catch(Exception e)
+			{
+			}
 			return;
 		}
 		
@@ -162,7 +182,7 @@ public class WebFilter implements Filter
 		if(m == null)
 		{
 			m = new IUser();
-			m.setId(-1L);
+			m.setId(Long.MIN_VALUE);
 		}
 		return m;
 	}

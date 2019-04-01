@@ -10,22 +10,23 @@ import javax.servlet.http.HttpServletRequest;
 public class PageNav<T>
 {
 	private static long i = 0L;
-	private Page<T> page;
+	private Page<T> pageModel;
 	private boolean isOutForm = false;
 	private static String PAGEFORMID = "jskeyPageForm";
 	private String formString = "";
 	private static int[] sizeArray = {1, 5, 10, 15, 20, 50, 100, 200};
 	private String pageName = "page";
-	private String pagesizeName = "pagesizeName";
+	private String pagesizeName = "pagesize";
 	
 	/**
 	 * 构造函数
 	 * @param request HttpServletRequest
+	 * @param pageModel
 	 * @param pageName
 	 * @param pagesizeName
 	 * @param page Page&lt;T&gt;
 	 */
-	public PageNav(HttpServletRequest request, Page<T> page, String pageName, String pagesizeName)
+	public PageNav(HttpServletRequest request, Page<T> pageModel, String pageName, String pagesizeName)
 	{
 		if(pageName != null && pageName.trim().length() > 0)
 		{
@@ -35,7 +36,17 @@ public class PageNav<T>
 		{
 			this.pagesizeName = pagesizeName;
 		}
-		dox(request, page);
+		dox(request, pageModel);
+	}
+
+	/**
+	 * 构造函数
+	 * @param request HttpServletRequest
+	 * @param pageModel Page&lt;T&gt;
+	 */
+	public PageNav(HttpServletRequest request, Page<T> pageModel)
+	{
+		dox(request, pageModel);
 	}
 
 	/**
@@ -43,26 +54,16 @@ public class PageNav<T>
 	 * @param request HttpServletRequest
 	 * @param page Page&lt;T&gt;
 	 */
-	public PageNav(HttpServletRequest request, Page<T> page)
+	private void dox(HttpServletRequest request, Page<T> pageModel)
 	{
-		dox(request, page);
-	}
-
-	/**
-	 * 构造函数
-	 * @param request HttpServletRequest
-	 * @param page Page&lt;T&gt;
-	 */
-	private void dox(HttpServletRequest request, Page<T> page)
-	{
-		this.page = page;
+		this.pageModel = pageModel;
 		String formId = PAGEFORMID + pageName;
 		try
 		{
-			StringBuilder sb = new StringBuilder("<script language=\"javascript\">if(typeof($jskey)!=\"object\"){$jskey={};}$jskey.pageview={go:function(pn,page,pagesize){pn=\"" + PAGEFORMID + "\"+pn;page=parseInt(page)||1;page=(page<1)?1:page;document.getElementById(pn+\"_page\").value=page;pagesize=parseInt(pagesize||" + page.getPagesize() + ")||10;pagesize=(pagesize<1)?10:pagesize;document.getElementById(pn+\"_pagesize\").value=pagesize;document.getElementById(pn).submit();}};</script>\n");
+			StringBuilder sb = new StringBuilder("<script language=\"javascript\">if(typeof($jskey)!=\"object\"){$jskey={};}$jskey.pageview={go:function(pn,page,pagesize){pn=\"" + PAGEFORMID + "\"+pn;page=parseInt(page)||1;page=(page<1)?1:page;document.getElementById(pn+\"_page\").value=page;pagesize=parseInt(pagesize||" + pageModel.getPagesize() + ")||10;pagesize=(pagesize<1)?10:pagesize;document.getElementById(pn+\"_pagesize\").value=pagesize;document.getElementById(pn).submit();}};</script>\n");
 			sb.append("<form id=\"").append(formId).append("\" method=\"post\" style=\"display:none;\" action=\"").append(request.getRequestURI().toString()).append("\">\n");
 			sb.append("<input id=\"").append(formId).append("_page\" name=\"").append(pageName).append("\" type=\"hidden\" value=\"1\"/>\n");
-			sb.append("<input id=\"").append(formId).append("_pagesize\" name=\"").append(pagesizeName).append("\" type=\"hidden\" value=\"").append(page.getPagesize()).append("\"/>\n");
+			sb.append("<input id=\"").append(formId).append("_pagesize\" name=\"").append(pagesizeName).append("\" type=\"hidden\" value=\"").append(pageModel.getPagesize()).append("\"/>\n");
 
 			@SuppressWarnings("all")
 			Enumeration e = request.getParameterNames();
@@ -133,11 +134,11 @@ public class PageNav<T>
 		StringBuilder sb = new StringBuilder();
 		sb.append(getForm());
 		sb.append("<div class=\"pageview\">");
-		int _lastpage = page.getTotalpage();
-		int _page = page.getPage();
+		int _lastpage = pageModel.getTotalpage();
+		int _page = pageModel.getPage();
 		if(isViewTotal)
 		{
-			sb.append(" 共").append(page.getTotalsize()).append("条 ");
+			sb.append(" 共").append(pageModel.getTotalsize()).append("条 ");
 		}
 		if(isViewPageInfo)
 		{
@@ -163,7 +164,7 @@ public class PageNav<T>
 				sb.append(" 每页 <select onchange=\"$jskey.pageview.go('").append(pageName).append("',1,this.value);\">");
 				for(int j : sizeArray)
 				{
-					sb.append("<option value=\"").append(j).append((page.getPagesize() == j)?"\" selected=\"selected\">":"\">").append(j).append("</option>");
+					sb.append("<option value=\"").append(j).append((pageModel.getPagesize() == j)?"\" selected=\"selected\">":"\">").append(j).append("</option>");
 				}
 				sb.append("</select> 条");
 			}
